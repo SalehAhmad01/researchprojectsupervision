@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<div class="workspace-page">
+    <div class="page-hero">
+        <div>
+            <span class="page-kicker">Account Settings</span>
+            <h1>Profile</h1>
+            <p>Keep your contact, department, and academic identity details accurate for project assignment, notifications, and audit records.</p>
+        </div>
+        <div class="page-hero-icon">{{ user.first_name|first|default:user.username|first|upper }}</div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="profile-summary">
+                <div class="profile-avatar">{{ user.first_name|first|default:user.username|first|upper }}</div>
+                <h3>{{ user.get_full_name|default:user.username }}</h3>
+                <p>{{ user.get_role_display }}</p>
+                <div class="profile-meta">
+                    <span>Department</span>
+                    <strong>{{ user.department|default:'Not provided' }}</strong>
+                </div>
+                <div class="profile-meta">
+                    <span>Email</span>
+                    <strong>{{ user.email|default:'Not provided' }}</strong>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="workspace-card">
+                <div class="workspace-card-header">
+                    <h2>Edit Profile</h2>
+                    <p>Update the information used across your supervision workspace.</p>
+                </div>
+                <form method="post" class="styled-form" novalidate>
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                    {% endif %}
+                    {% for field in form %}
+                        <div class="form-field">
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                            {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                    {% endfor %}
+                    <div class="form-actions">
+                        <a href="{% url 'dashboard:index' %}" class="btn btn-light btn-lg">Back</a>
+                        <button class="btn btn-primary btn-lg gradient-btn">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

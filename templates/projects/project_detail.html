@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Project Detail{% endblock %}
+{% block content %}
+<div class="card border-0 shadow-sm mb-4"><div class="card-body"><h2>{{ project.title }}</h2><p class="text-muted">{{ project.get_status_display }}</p><p>{{ project.abstract }}</p><p><strong>Supervisor:</strong> {{ project.supervisor|default:'Unassigned' }}</p>{% if user.is_coordinator %}<form method="post" action="{% url 'projects:approve' project.pk %}" class="d-inline">{% csrf_token %}<button class="btn btn-success">Approve</button></form> <a class="btn btn-outline-primary" href="{% url 'projects:assign_supervisor' project.pk %}">Assign Supervisor</a>{% endif %}</div></div>
+<h4>Draft Versions</h4><div class="list-group">{% for draft in project.drafts.all %}<a class="list-group-item list-group-item-action" href="{{ draft.get_absolute_url }}">Chapter {{ draft.chapter }} v{{ draft.version }} - {{ draft.get_status_display }}</a>{% empty %}<div class="list-group-item">No drafts submitted.</div>{% endfor %}</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Assign Supervisor{% endblock %}
+{% block content %}
+<div class="workspace-page">
+    <div class="page-hero">
+        <div>
+            <span class="page-kicker">Coordinator Workflow</span>
+            <h1>Assign Supervisor</h1>
+            <p>Match the project with an appropriate supervisor based on workload, department fit, and research alignment.</p>
+        </div>
+        <div class="page-hero-icon">AS</div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-xl-4">
+            <div class="assignment-summary">
+                <span class="status-pill">{{ project.get_status_display }}</span>
+                <h2>{{ project.title }}</h2>
+                <p>{{ project.abstract|truncatewords:38 }}</p>
+                <div class="assignment-meta">
+                    <span>Student</span>
+                    <strong>{{ project.student.get_full_name|default:project.student.username }}</strong>
+                </div>
+                <div class="assignment-meta">
+                    <span>Department</span>
+                    <strong>{{ project.student.department|default:'Not provided' }}</strong>
+                </div>
+                <div class="assignment-meta">
+                    <span>Current Supervisor</span>
+                    <strong>{% if project.supervisor %}{{ project.supervisor.get_full_name|default:project.supervisor.username }}{% else %}Unassigned{% endif %}</strong>
+                </div>
+                <a href="{{ project.get_absolute_url }}" class="btn btn-outline-primary w-100 mt-3">View Project</a>
+            </div>
+        </div>
+
+        <div class="col-xl-8">
+            <div class="workspace-card">
+                <div class="workspace-card-header">
+                    <h2>Supervisor Assignment</h2>
+                    <p>Select a supervisor and add assignment notes for audit and coordination records.</p>
+                </div>
+                <form method="post" class="styled-form assignment-form" novalidate>
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                    {% endif %}
+                    {% for field in form %}
+                        <div class="form-field {% if field.name == 'notes' %}form-field-full{% endif %}">
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                            {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                    {% endfor %}
+                    <div class="assignment-guidance form-field-full">
+                        <h3>Assignment checklist</h3>
+                        <div class="row g-3">
+                            <div class="col-md-4"><span>01</span><strong>Review topic fit</strong></div>
+                            <div class="col-md-4"><span>02</span><strong>Check department conflict</strong></div>
+                            <div class="col-md-4"><span>03</span><strong>Confirm workload balance</strong></div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <a href="{{ project.get_absolute_url }}" class="btn btn-light btn-lg">Cancel</a>
+                        <button class="btn btn-primary btn-lg gradient-btn">Assign Supervisor</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

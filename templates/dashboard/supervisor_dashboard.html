@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}Supervisor Dashboard{% endblock %}
+{% block content %}
+<h2 class="mb-4">Supervisor Dashboard</h2>
+<div class="row g-3 mb-4"><div class="col-md-6"><div class="card card-stat"><div class="card-body"><h6>Assigned Projects</h6><h2>{{ projects.count }}</h2></div></div></div><div class="col-md-6"><div class="card card-stat"><div class="card-body"><h6>Pending Draft Reviews</h6><h2>{{ pending_drafts.count }}</h2></div></div></div></div>
+<div class="card border-0 shadow-sm"><div class="card-body"><h5>Pending Reviews</h5><div class="list-group">{% for draft in pending_drafts %}<a class="list-group-item list-group-item-action" href="{{ draft.get_absolute_url }}">{{ draft }}</a>{% empty %}<div class="list-group-item">No pending reviews.</div>{% endfor %}</div></div></div>
+{% endblock %}

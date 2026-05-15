@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Upload Draft{% endblock %}
+{% block content %}
+<div class="workspace-page">
+    <div class="page-hero">
+        <div>
+            <span class="page-kicker">Student Submission</span>
+            <h1>Upload Chapter Draft</h1>
+            <p>Submit your latest chapter version securely for supervisor review, feedback, and progress tracking.</p>
+        </div>
+        <div class="page-hero-icon">UD</div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="workspace-card">
+                <div class="workspace-card-header">
+                    <h2>Draft Details</h2>
+                    <p>Choose an approved project, select the chapter, and upload your document file.</p>
+                </div>
+                <form method="post" enctype="multipart/form-data" class="styled-form upload-draft-form" novalidate>
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                    {% endif %}
+                    {% for field in form %}
+                        <div class="form-field {% if field.name == 'file' %}form-field-full upload-file-field{% endif %}">
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.name == 'file' %}
+                                <div class="upload-file-help">Accepted document formats are validated before storage. Keep your file clear and chapter-specific.</div>
+                            {% endif %}
+                            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                            {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                    {% endfor %}
+                    <div class="form-actions">
+                        <a href="{% url 'drafts:list' %}" class="btn btn-light btn-lg">Cancel</a>
+                        <button class="btn btn-primary btn-lg gradient-btn">Upload Draft</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="upload-guidance-panel">
+                <h3>Before you upload</h3>
+                <div class="upload-guidance-item">
+                    <span>01</span>
+                    <strong>Use the correct chapter</strong>
+                    <p>Select the chapter that matches the document you are submitting.</p>
+                </div>
+                <div class="upload-guidance-item">
+                    <span>02</span>
+                    <strong>Submit the latest version</strong>
+                    <p>The system tracks version numbers automatically after each upload.</p>
+                </div>
+                <div class="upload-guidance-item">
+                    <span>03</span>
+                    <strong>Wait for feedback</strong>
+                    <p>Your supervisor will be notified when your draft is uploaded successfully.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

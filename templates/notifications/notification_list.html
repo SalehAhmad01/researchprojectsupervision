@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<h2 class="mb-4">Notifications</h2>
+<div class="list-group">{% for notification in notifications %}<div class="list-group-item {% if not notification.is_read %}list-group-item-primary{% endif %}"><div class="d-flex justify-content-between"><strong>{{ notification.title }}</strong><span>{{ notification.created_at }}</span></div><p>{{ notification.message }}</p>{% if notification.url %}<a class="btn btn-sm btn-outline-primary" href="{{ notification.url }}">Open</a>{% endif %}{% if not notification.is_read %}<form method="post" action="{% url 'notifications:mark_read' notification.pk %}" class="d-inline">{% csrf_token %}<button class="btn btn-sm btn-secondary">Mark read</button></form>{% endif %}</div>{% empty %}<div class="list-group-item">No notifications.</div>{% endfor %}</div>
+{% endblock %}

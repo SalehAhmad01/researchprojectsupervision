@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Feedback History{% endblock %}
+{% block content %}
+<h2 class="mb-4">Feedback History</h2>
+<div class="list-group">{% for feedback in feedbacks %}<a class="list-group-item list-group-item-action" href="{{ feedback.draft.get_absolute_url }}"><strong>{{ feedback.draft }}</strong><br>{{ feedback.get_decision_display }} - {{ feedback.progress_score }}%</a>{% empty %}<div class="list-group-item">No feedback recorded.</div>{% endfor %}</div>
+{% endblock %}

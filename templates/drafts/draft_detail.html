@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Draft Detail{% endblock %}
+{% block content %}
+<div class="card border-0 shadow-sm mb-4"><div class="card-body"><h2>{{ draft.project.title }}</h2><p>{{ draft.get_chapter_display }} version {{ draft.version }}</p><p><strong>Status:</strong> {{ draft.get_status_display }}</p><p><strong>Submitted:</strong> {{ draft.submitted_at }}</p><a class="btn btn-outline-primary" href="{{ draft.file.url }}">Download Draft</a>{% if user.is_supervisor %} <a class="btn btn-primary" href="{% url 'feedbacks:create' draft.pk %}">Review</a>{% endif %}</div></div>
+<h4>Review History</h4><div class="list-group">{% for feedback in draft.feedbacks.all %}<div class="list-group-item"><div class="d-flex justify-content-between"><strong>{{ feedback.get_decision_display }}</strong><span>{{ feedback.created_at }}</span></div><p class="mb-1">{{ feedback.comments }}</p><div class="progress"><div class="progress-bar" style="width: {{ feedback.progress_score }}%">{{ feedback.progress_score }}%</div></div></div>{% empty %}<div class="list-group-item">No feedback yet.</div>{% endfor %}</div>
+{% endblock %}

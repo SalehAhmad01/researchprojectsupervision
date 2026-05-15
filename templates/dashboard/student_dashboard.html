@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+<h2 class="mb-4">Student Dashboard</h2>
+<div class="row g-3">{% for item in project_progress %}<div class="col-md-6"><div class="card card-stat"><div class="card-body"><h5>{{ item.project.title }}</h5><p>{{ item.project.get_status_display }}</p><div class="progress"><div class="progress-bar progress-dynamic" data-progress="{{ item.progress }}">{{ item.project.drafts.count }}/5 chapters</div></div></div></div></div>{% empty %}<div class="col"><div class="alert alert-info">No project submitted yet.</div></div>{% endfor %}</div>
+{% endblock %}

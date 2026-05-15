@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Drafts{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4"><h2>Draft Submissions</h2></div>
+<div class="card border-0 shadow-sm"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Project</th><th>Chapter</th><th>Version</th><th>Status</th><th>Submitted</th><th></th></tr></thead><tbody>{% for draft in drafts %}<tr><td>{{ draft.project.title }}</td><td>{{ draft.get_chapter_display }}</td><td>v{{ draft.version }}</td><td>{{ draft.get_status_display }}</td><td>{{ draft.submitted_at }}</td><td><a class="btn btn-sm btn-outline-primary" href="{{ draft.get_absolute_url }}">View</a></td></tr>{% empty %}<tr><td colspan="6" class="text-center py-4">No drafts found.</td></tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Submit Topic{% endblock %}
+{% block content %}
+<div class="workspace-page">
+    <div class="page-hero">
+        <div>
+            <span class="page-kicker">Research Project Management</span>
+            <h1>Submit Research Topic</h1>
+            <p>Provide a clear title, concise abstract, keywords, and deadline so coordinators can review and assign the most suitable supervisor.</p>
+        </div>
+        <div class="page-hero-icon">RP</div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="workspace-card">
+                <div class="workspace-card-header">
+                    <h2>Topic Details</h2>
+                    <p>Your submission will enter the coordinator approval workflow.</p>
+                </div>
+                <form method="post" class="styled-form" novalidate>
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                    {% endif %}
+                    {% for field in form %}
+                        <div class="form-field {% if field.name == 'abstract' %}form-field-full{% endif %}">
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                            {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                    {% endfor %}
+                    <div class="form-actions">
+                        <a href="{% url 'projects:list' %}" class="btn btn-light btn-lg">Cancel</a>
+                        <button class="btn btn-primary btn-lg gradient-btn">Submit for Review</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="info-panel">
+                <h3>Before submitting</h3>
+                <ul>
+                    <li>Use a specific and academically relevant title.</li>
+                    <li>Avoid duplicate or overly broad topics.</li>
+                    <li>Include keywords that describe your research area.</li>
+                    <li>Review your abstract for clarity and scope.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

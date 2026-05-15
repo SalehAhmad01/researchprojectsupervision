@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="auth-page">
+    <div class="auth-shell auth-shell-wide">
+        <div class="auth-hero">
+            <span class="auth-badge">Join the Platform</span>
+            <h1>Create your academic workspace</h1>
+            <p>Students, supervisors, and coordinators can collaborate securely through approvals, draft versioning, feedback, and notifications.</p>
+            <div class="auth-highlights">
+                <span>Topic workflow</span>
+                <span>Version history</span>
+                <span>Analytics dashboard</span>
+            </div>
+        </div>
+        <div class="auth-card">
+            <div class="auth-card-header">
+                <h2>Create account</h2>
+                <p>Complete your profile to request access.</p>
+            </div>
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                {% endif %}
+                <div class="row g-3">
+                    {% for field in form %}
+                        <div class="col-md-6" data-register-field="{{ field.name }}">
+                            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                            {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <button class="btn btn-primary btn-lg w-100 auth-submit mt-4">Create Account</button>
+            </form>
+            <p class="auth-switch">Already registered? <a href="{% url 'accounts:login' %}">Sign in</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Coordinator Dashboard{% endblock %}
+{% block content %}
+<h2 class="mb-4">Coordinator Dashboard</h2>
+<div class="row g-3 mb-4"><div class="col-md-4"><div class="card card-stat"><div class="card-body"><h6>Total Projects</h6><h2>{{ total_projects }}</h2></div></div></div><div class="col-md-4"><div class="card card-stat"><div class="card-body"><h6>Pending Approvals</h6><h2>{{ pending_approvals }}</h2></div></div></div><div class="col-md-4"><div class="card card-stat"><div class="card-body"><h6>Delayed Submissions</h6><h2>{{ delayed_submissions }}</h2></div></div></div></div>
+<div class="row g-3"><div class="col-lg-6"><div class="card border-0 shadow-sm"><div class="card-body"><h5>Project Status</h5><canvas id="statusChart"></canvas></div></div></div><div class="col-lg-6"><div class="card border-0 shadow-sm"><div class="card-body"><h5>Supervisor Workload</h5><canvas id="workloadChart"></canvas></div></div></div></div>
+{% endblock %}
+{% block scripts %}
+{{ project_status_counts|json_script:'status-data' }}
+{{ supervisor_workload|json_script:'workload-data' }}
+<script>
+const statusData = JSON.parse(document.getElementById('status-data').textContent);
+const workloadData = JSON.parse(document.getElementById('workload-data').textContent);
+new Chart(document.getElementById('statusChart'), {type: 'doughnut', data: {labels: statusData.map(i => i.status), datasets: [{data: statusData.map(i => i.total)}]}});
+new Chart(document.getElementById('workloadChart'), {type: 'bar', data: {labels: workloadData.map(i => i.supervisor__username || 'Unassigned'), datasets: [{label: 'Projects', data: workloadData.map(i => i.total)}]}});
+</script>
+{% endblock %}

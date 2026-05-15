@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Review Draft{% endblock %}
+{% block content %}
+<h2 class="mb-4">Review Draft</h2>
+<div class="card border-0 shadow-sm"><div class="card-body"><form method="post">{% csrf_token %}{{ form.as_p }}<button class="btn btn-primary">Submit Feedback</button></form></div></div>
+{% endblock %}

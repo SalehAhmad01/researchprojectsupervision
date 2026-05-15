@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% block title %}Manage Users{% endblock %}
+{% block content %}
+<div class="workspace-page">
+    <div class="page-hero">
+        <div>
+            <span class="page-kicker">Coordinator Tools</span>
+            <h1>Manage Students & Supervisors</h1>
+            <p>Create student and supervisor accounts one at a time or upload them in bulk with CSV.</p>
+        </div>
+        <div class="page-hero-icon">MU</div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="workspace-card">
+                <ul class="nav nav-pills management-tabs mb-4" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link {% if active_tab == 'bulk' %}active{% endif %}" id="bulk-tab" data-bs-toggle="pill" data-bs-target="#bulk-panel" type="button" role="tab">Bulk Upload</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link {% if active_tab == 'single' %}active{% endif %}" id="single-tab" data-bs-toggle="pill" data-bs-target="#single-panel" type="button" role="tab">Single User</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link {% if active_tab == 'assign' %}active{% endif %}" id="assign-tab" data-bs-toggle="pill" data-bs-target="#assign-panel" type="button" role="tab">Bulk Assignments</button>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade {% if active_tab == 'bulk' %}show active{% endif %}" id="bulk-panel" role="tabpanel" aria-labelledby="bulk-tab">
+                        <div class="workspace-card-header">
+                            <h2>Bulk Upload</h2>
+                            <p>Use CSV columns for username, email, role, names, department, IDs, phone, and optional password.</p>
+                        </div>
+                        <form method="post" enctype="multipart/form-data" class="styled-form user-upload-form" novalidate>
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="bulk_upload">
+                            {% if form.non_field_errors %}
+                                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                            {% endif %}
+                            <div class="form-field-full upload-file-field">
+                                <label class="form-label" for="{{ form.csv_file.id_for_label }}">{{ form.csv_file.label }}</label>
+                                {{ form.csv_file }}
+                                {% if form.csv_file.help_text %}<div class="form-text">{{ form.csv_file.help_text }}</div>{% endif %}
+                                {% for error in form.csv_file.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="csv-sample form-field-full">
+                                <h3>CSV format</h3>
+                                <code>username,email,role,first_name,last_name,department,student_id,staff_id,phone,password</code>
+                                <span>Allowed roles: student, supervisor. Coordinator accounts are not created through bulk upload.</span>
+                            </div>
+                            <div class="form-actions">
+                                <button class="btn btn-primary btn-lg gradient-btn">Upload Users</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade {% if active_tab == 'single' %}show active{% endif %}" id="single-panel" role="tabpanel" aria-labelledby="single-tab">
+                        <div class="workspace-card-header">
+                            <h2>Single User</h2>
+                            <p>Create one student or supervisor account manually.</p>
+                        </div>
+                        <form method="post" class="styled-form single-user-form" novalidate>
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="single_user">
+                            {% if single_user_form.non_field_errors %}
+                                <div class="alert alert-danger">{{ single_user_form.non_field_errors }}</div>
+                            {% endif %}
+                            {% for field in single_user_form %}
+                                <div class="form-field" data-register-field="{{ field.name }}">
+                                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                                    {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                                </div>
+                            {% endfor %}
+                            <div class="form-actions">
+                                <button class="btn btn-primary btn-lg gradient-btn">Create User</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade {% if active_tab == 'assign' %}show active{% endif %}" id="assign-panel" role="tabpanel" aria-labelledby="assign-tab">
+                        <div class="workspace-card-header">
+                            <h2>Bulk Assignments</h2>
+                            <p>Assign eligible students to supervisors in bulk. If project_title is empty, the latest student project is assigned.</p>
+                        </div>
+                        <form method="post" enctype="multipart/form-data" class="styled-form user-upload-form" novalidate>
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="bulk_assign">
+                            {% if assignment_form.non_field_errors %}
+                                <div class="alert alert-danger">{{ assignment_form.non_field_errors }}</div>
+                            {% endif %}
+                            <div class="form-field-full upload-file-field">
+                                <label class="form-label" for="{{ assignment_form.csv_file.id_for_label }}">{{ assignment_form.csv_file.label }}</label>
+                                {{ assignment_form.csv_file }}
+                                {% if assignment_form.csv_file.help_text %}<div class="form-text">{{ assignment_form.csv_file.help_text }}</div>{% endif %}
+                                {% for error in assignment_form.csv_file.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                            </div>
+                            <div class="csv-sample form-field-full">
+                                <h3>Assignment CSV format</h3>
+                                <code>student_username,supervisor_username,project_title,notes</code>
+                                <span>Students must be eligible. Supervisors should already exist with their department set.</span>
+                            </div>
+                            <div class="form-actions">
+                                <button class="btn btn-primary btn-lg gradient-btn">Assign in Bulk</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="user-stats-grid">
+                <div class="user-stat-card">
+                    <span>Students</span>
+                    <strong>{{ students|length }}</strong>
+                </div>
+                <div class="user-stat-card">
+                    <span>Eligible</span>
+                    <strong>{{ eligible_students }}</strong>
+                </div>
+                <div class="user-stat-card">
+                    <span>Supervisors</span>
+                    <strong>{{ supervisors|length }}</strong>
+                </div>
+            </div>
+            <div class="upload-guidance-panel mt-4">
+                <h3>Upload rules</h3>
+                <div class="upload-guidance-item">
+                    <span>01</span>
+                    <strong>Existing usernames are updated</strong>
+                    <p>If a username already exists, the account details are refreshed from the CSV.</p>
+                </div>
+                <div class="upload-guidance-item">
+                    <span>02</span>
+                    <strong>IDs are role-aware</strong>
+                    <p>Students use Student ID. Supervisors use Staff ID.</p>
+                </div>
+                <div class="upload-guidance-item">
+                    <span>03</span>
+                    <strong>Eligibility controls assignment</strong>
+                    <p>Use eligible=true for students who can be assigned to project supervision.</p>
+                </div>
+                <div class="upload-guidance-item">
+                    <span>04</span>
+                    <strong>Departments support matching</strong>
+                    <p>Upload supervisors with departments so coordinators can assign by academic area.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+        <div class="col-lg-6">
+            <div class="workspace-card user-list-card">
+                <div class="workspace-card-header"><h2>Students</h2><p>Currently registered student accounts.</p></div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0"><thead><tr><th>Username</th><th>Email</th><th>Student ID</th></tr></thead><tbody>{% for student in students %}<tr><td>{{ student.username }}</td><td>{{ student.email }}</td><td>{{ student.student_id|default:'-' }}</td></tr>{% empty %}<tr><td colspan="3" class="text-center py-4">No students found.</td></tr>{% endfor %}</tbody></table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="workspace-card user-list-card">
+                <div class="workspace-card-header"><h2>Supervisors</h2><p>Currently registered supervisor accounts.</p></div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0"><thead><tr><th>Username</th><th>Email</th><th>Staff ID</th></tr></thead><tbody>{% for supervisor in supervisors %}<tr><td>{{ supervisor.username }}</td><td>{{ supervisor.email }}</td><td>{{ supervisor.staff_id|default:'-' }}</td></tr>{% empty %}<tr><td colspan="3" class="text-center py-4">No supervisors found.</td></tr>{% endfor %}</tbody></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

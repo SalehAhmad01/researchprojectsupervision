@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="auth-page">
+    <div class="auth-shell">
+        <div class="auth-hero">
+            <span class="auth-badge">Research Supervision</span>
+            <h1>Welcome back</h1>
+            <p>Manage research projects, draft submissions, feedback, approvals, and progress analytics from one secure academic workspace.</p>
+            <div class="auth-highlights">
+                <span>Role-based access</span>
+                <span>Secure draft uploads</span>
+                <span>Supervisor feedback</span>
+            </div>
+        </div>
+        <div class="auth-card">
+            <div class="auth-card-header">
+                <h2>Choose login type</h2>
+                <p>Select your role before entering your account details.</p>
+            </div>
+            <div class="role-login-grid">
+                {% for option in role_options %}
+                    <a class="role-login-card {% if selected_role == option.value %}active{% endif %}" href="{% url 'accounts:login' %}?role={{ option.value }}">
+                        <strong>{{ option.label }}</strong>
+                        <span>{{ option.description }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {{ form.role }}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                {% endif %}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.username.id_for_label }}">Username</label>
+                    {{ form.username }}
+                    {% for error in form.username.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.password.id_for_label }}">Password</label>
+                    {{ form.password }}
+                    {% for error in form.password.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                </div>
+                <button class="btn btn-primary btn-lg w-100 auth-submit">Login</button>
+            </form>
+            <p class="auth-switch">New to the system? <a href="{% url 'accounts:register' %}">Create an account</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
