@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: research-project-supervision
+    runtime: python
+    buildCommand: ./build.sh
+    startCommand: gunicorn config.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.3
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: false
+      - key: ALLOWED_HOSTS
+        value: research-project-supervision.onrender.com
+      - key: CSRF_TRUSTED_ORIGINS
+        value: https://research-project-supervision.onrender.com
+      - key: DATABASE_URL
+        fromDatabase:
+          name: research-project-supervision-db
+          property: connectionString
+
+databases:
+  - name: research-project-supervision-db
+    databaseName: research_project_supervision
+    user: research_project_supervision_user
